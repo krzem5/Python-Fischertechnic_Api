@@ -52,6 +52,7 @@ def get_error(err):
 
 
 class FtLib:
+	@staticmethod
 	def version():
 		s=ctypes.create_string_buffer(128)
 		FT_LIB_DLL.ftxGetLibVersionStr(s,ctypes.wintypes.DWORD(128))
@@ -59,16 +60,19 @@ class FtLib:
 
 
 
+	@staticmethod
 	def init():
 		return get_error(FT_LIB_DLL.ftxInitLib())
 
 
 
+	@staticmethod
 	def is_init():
 		return get_error(FT_LIB_DLL.ftxIsLibInit())
 
 
 
+	@staticmethod
 	def open_device(port,baud_rate=9600):
 		dw=ctypes.wintypes.DWORD()
 		if (type(port)==int):
@@ -84,6 +88,7 @@ class FtLib:
 
 
 
+	@staticmethod
 	def get_avaible_com_ports(usb_only=False):
 		n=FT_LIB_DLL.GetAvailableComPorts((0 if usb_only==False else 1))
 		o=[]
@@ -97,6 +102,7 @@ class FtLib:
 
 
 
+	@staticmethod
 	def close():
 		e=FT_LIB_DLL.ftxCloseAllDevices()
 		if (e!=0):
@@ -147,7 +153,7 @@ class FtDevice:
 
 
 	def name(self,name=None):
-		if (name==None):
+		if (name is None):
 			s=ctypes.create_string_buffer(128)
 			FT_LIB_DLL.GetRoboTxDevName(self._h,0,s,ctypes.wintypes.DWORD(128))
 			return str(s.value,"utf-8")
@@ -211,7 +217,7 @@ class FtDevice:
 		e=FT_LIB_DLL.FtRemoteCmd(self._h,ctypes.create_string_buffer(bytes(cmd,"utf-8")),ctypes.CFUNCTYPE(None,ctypes.c_char_p,ctypes.wintypes.DWORD)(f))
 		if (e!=0):
 			return get_error(e)
-		while (self._ret==None):
+		while (self._ret is None):
 			pass
 		return self._ret
 
@@ -327,51 +333,45 @@ FtLib.init()
 FtLib.is_init()
 FtLib.get_avaible_com_ports()
 d=FtLib.open_device("COM3")
-# d.frimware_version()
-# d.hardware_version()
-# d.dll_version()
-# d.serial_number()
-# d.name()
-# d.name("Krzem5")
-# d.bluetooth_address()
+d.frimware_version()
+d.hardware_version()
+d.dll_version()
+d.serial_number()
+d.name()
+d.name("Krzem5")
+d.bluetooth_address()
 io=d.start_io()
-# d.io_active()
-# io.status()
-# io.reset_counter(COUNTER_1)
-# io.set_counter_state(COUNTER_1,COUNTER_INVERTED)
-# import time
-# e=time.time()+5
-# while (time.time()<=e):
-# 	print(io.get_counter(COUNTER_1))
-# 	time.sleep(0.025)
-# io.start_motor(MOTOR_1,MIN_OUTPUT_VALUE,MAX_OUTPUT_VALUE)
-# import time
-# time.sleep(0.25)
-# io.stop_motor(MOTOR_1)
-# import time
-# time.sleep(0.25)
-# io.set_output(OUTPUT_PIN_1,MAX_OUTPUT_VALUE)
-# import time
-# time.sleep(0.5)
-# io.stop_all_motors()
-# import time
-# e=time.time()+5
-# while (time.time()<=e):
-# 	print(io.get_input(INPUT_1))
-# 	time.sleep(0.025)
-# import time
-# e=time.time()+5
-# while (time.time()<=e):
-# 	print(io.get_buttons())
-# 	time.sleep(0.025)
-# print(d.run_command("dir ramdisk"))
-# d.clear_disk(FLASH_DISK)
-# print(d.set_message("This is a Message!"))
-# import time
-# time.sleep(0.1)
-# d.upload_file("./file.txt","Ufile.txt")
-# d.run_program()
-# d.stop_program()
+d.io_active()
+io.status()
+io.reset_counter(COUNTER_1)
+io.set_counter_state(COUNTER_1,COUNTER_INVERTED)
+import time
+e=time.time()+5
+while (time.time()<=e):
+	print(io.get_counter(COUNTER_1))
+	time.sleep(0.025)
+io.start_motor(MOTOR_1,MIN_OUTPUT_VALUE,MAX_OUTPUT_VALUE)
+time.sleep(0.25)
+io.stop_motor(MOTOR_1)
+time.sleep(0.25)
+io.set_output(OUTPUT_PIN_1,MAX_OUTPUT_VALUE)
+time.sleep(0.5)
+io.stop_all_motors()
+e=time.time()+5
+while (time.time()<=e):
+	print(io.get_input(INPUT_1))
+	time.sleep(0.025)
+e=time.time()+5
+while (time.time()<=e):
+	print(io.get_buttons())
+	time.sleep(0.025)
+print(d.run_command("dir ramdisk"))
+d.clear_disk(FLASH_DISK)
+print(d.set_message("This is a Message!"))
+time.sleep(0.1)
+d.upload_file("./file.txt","Ufile.txt")
+d.run_program()
+d.stop_program()
 io.close()
 d.close()
 FtLib.close()
