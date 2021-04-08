@@ -266,7 +266,7 @@ class FtDeviceIO:
 
 	def set_output_mode(self,o_id,mode):
 		if (self._m[o_id]==mode):
-			return
+			return None
 		self._m[o_id]=mode
 		e=FT_LIB_DLL.SetFtMotorConfig(self._h,0,o_id,mode)
 		if (e!=0):
@@ -276,6 +276,7 @@ class FtDeviceIO:
 		else:
 			FT_LIB_DLL.SetOutPwmValues(self._h,0,o_id*2,0)
 			FT_LIB_DLL.SetOutPwmValues(self._h,0,o_id*2+1,0)
+		return None
 
 
 
